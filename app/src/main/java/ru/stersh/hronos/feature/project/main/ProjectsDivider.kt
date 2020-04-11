@@ -1,4 +1,4 @@
-package ru.stersh.hronos.core.ui
+package ru.stersh.hronos.feature.project.main
 
 import android.graphics.Rect
 import android.view.View
@@ -29,11 +29,11 @@ class ProjectsDivider(private val margin: Int = 8.dp) : RecyclerView.ItemDecorat
         val itemsCount = parent.adapter!!.itemCount
         if (itemsCount % 2 == 0) {
             if (viewPosition in itemsCount - 2..itemsCount) {
-                outRect.bottom = margin
+                outRect.bottom = margin * 2 + 56.dp
             }
         } else {
             if (viewPosition == itemsCount - 1) {
-                outRect.bottom = margin
+                outRect.bottom = margin * 2 + 56.dp
             }
         }
     }

@@ -9,7 +9,8 @@ data class Project(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val title: String,
-    val order: Int
+    val order: Int,
+    val color: Int
 ) {
     companion object {
         const val PROJECTS_TABLE = "projects"

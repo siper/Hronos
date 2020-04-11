@@ -27,6 +27,7 @@ object Di : KoinComponent {
                     HronosDB::class.java,
                     "hronos-database"
                 )
+                .fallbackToDestructiveMigration()
                 .build()
         }
     }

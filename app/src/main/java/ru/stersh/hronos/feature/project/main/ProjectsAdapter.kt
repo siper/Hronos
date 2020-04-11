@@ -1,7 +1,9 @@
 package ru.stersh.hronos.feature.project.main
 
-import android.widget.ImageButton
+import android.content.res.ColorStateList
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import com.google.android.material.card.MaterialCardView
 import com.hannesdorfmann.adapterdelegates4.AsyncListDifferDelegationAdapter
@@ -38,6 +40,7 @@ class ProjectsAdapter(
                             && oldItem.order == newItem.order
                             && oldItem.isRunning == newItem.isRunning
                             && oldItem.spentTime == newItem.spentTime
+                            && oldItem.color == newItem.color
                 }
                 return false
             }
@@ -49,23 +52,32 @@ class ProjectsAdapter(
         ) = adapterDelegate<UiProject, UiItem>(R.layout.item_project) {
             val root = findViewById<MaterialCardView>(R.id.item_project)
             val title = findViewById<TextView>(R.id.title)
-            val startStop = findViewById<ImageButton>(R.id.start_stop)
+            val startStop = findViewById<ImageView>(R.id.start_stop)
             val timeSpent = findViewById<TimerView>(R.id.time_spent)
 
             root.setOnClickListener { onProjectClick.invoke(item) }
             startStop.setOnClickListener { onStartStopClick.invoke(item) }
 
             bind {
+                val colors = itemView.resources.getIntArray(R.array.project_colors)
+                val alphaColors = itemView.resources.getIntArray(R.array.project_alpha_colors)
+                root.setCardBackgroundColor(alphaColors[item.color])
                 title.text = item.title
+                title.setTextColor(colors[item.color])
+                timeSpent.setTextColor(colors[item.color])
                 timeSpent.apply {
                     baseTime = item.spentTime
                     if (item.isRunning) start() else stop()
                 }
                 if (item.isRunning) {
-                    startStop.setBackgroundResource(R.drawable.ic_stop)
+                    startStop.setImageResource(R.drawable.ic_stop)
                 } else {
-                    startStop.setBackgroundResource(R.drawable.ic_start)
+                    startStop.setImageResource(R.drawable.ic_start)
                 }
+                ImageViewCompat.setImageTintList(
+                    startStop,
+                    ColorStateList.valueOf(colors[item.color])
+                )
             }
         }
     }

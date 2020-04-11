@@ -20,6 +20,7 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : RxPresente
                 {
                     if (it.isEmpty()) {
                         viewState.showEmptyView()
+                        viewState.showAddProjectButton()
                         return@subscribe
                     }
                     currentData.clear()

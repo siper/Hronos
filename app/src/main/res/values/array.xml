@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="project_colors">
+        <item>#3300fd</item>
+        <item>#00a7ff</item>
+        <item>#02ab02</item>
+        <item>#ff7a08</item>
+        <item>#e63146</item>
+        <item>#5a9091</item>
+        <item>#c0532d</item>
+    </array>
+    <array name="project_alpha_colors">
+        <item>#263300fd</item>
+        <item>#2600a7ff</item>
+        <item>#2602ab02</item>
+        <item>#26ff7a08</item>
+        <item>#26e63146</item>
+        <item>#265a9091</item>
+        <item>#26c0532d</item>
+    </array>
+</resources>

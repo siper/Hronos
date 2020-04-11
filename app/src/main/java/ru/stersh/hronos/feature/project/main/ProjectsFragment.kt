@@ -11,8 +11,7 @@ import moxy.ktx.moxyPresenter
 import org.koin.core.get
 import ru.stersh.hronos.R
 import ru.stersh.hronos.core.Di
-import ru.stersh.hronos.core.ui.ProjectsDivider
-import ru.stersh.hronos.feature.project.add.AddProjectDialog
+import ru.stersh.hronos.feature.project.editor.EditorProjectDialog
 
 class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
     ProjectsView {
@@ -42,7 +41,6 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
         content.layoutManager = GridLayoutManager(requireActivity(), 2)
         content.adapter = adapter
         content.addItemDecoration(ProjectsDivider())
-
     }
 
     override fun updateProjects(projects: List<UiProject>) {
@@ -57,7 +55,7 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
         project_add_btn.setIconResource(R.drawable.ic_add_black_24dp)
         project_add_btn.setIconTintResource(R.color.colorWhite)
         project_add_btn.setOnClickListener {
-            val dialog = AddProjectDialog()
+            val dialog = EditorProjectDialog()
             dialog.show(parentFragmentManager, null)
         }
     }
