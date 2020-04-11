@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Hronos</string>
+    <string name="add_project_title">Add project</string>
+    <string name="projects_title">Projects</string>
+    <string name="project_name">Project name</string>
+    <string name="project_name_error">Project name can\'t be empty</string>
+    <string name="stop_task_title">Stop</string>
+</resources>
