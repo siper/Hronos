@@ -55,7 +55,8 @@ class ProjectsInteractor(
                         title = project.title,
                         order = project.order,
                         isRunning = isRunning,
-                        spentTime = spentTime
+                        spentTime = spentTime,
+                        color = project.color
                     )
                 }
             }
@@ -88,7 +89,9 @@ class ProjectsInteractor(
         }
     }
 
-    fun addProject(title: String): Completable {
-        return Completable.fromCallable { projectDao.put(Project(title = title, order = -1)) }
+    fun addProject(title: String, color: Int): Completable {
+        return Completable.fromCallable {
+            projectDao.put(Project(title = title, order = -1, color = color))
+        }
     }
 }

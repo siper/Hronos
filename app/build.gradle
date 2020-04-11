@@ -85,7 +85,7 @@ dependencies {
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.3'
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
-
+    
     // Kotlin std
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

@@ -7,5 +7,6 @@ data class UiProject(
     val title: String,
     val order: Int,
     val isRunning: Boolean,
-    val spentTime: Long
+    val spentTime: Long,
+    val color: Int
 ) : UiItem
