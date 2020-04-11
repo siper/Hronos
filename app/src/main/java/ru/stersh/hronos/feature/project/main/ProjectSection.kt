@@ -32,6 +32,7 @@ class ProjectSection(
         holder.timeSpent.setTextColor(colors[item.color])
         holder.timeSpent.apply {
             baseTime = item.spentTime
+            startTime = item.startTime
             if (item.isRunning) start() else stop()
         }
         if (item.isRunning) {

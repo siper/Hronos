@@ -55,11 +55,13 @@ class ProjectsInteractor(
                     val projectTasks = t.filter { it.projectId == project.id }
                     var spentTime = 0L
                     var isRunning = false
+                    var startTime = 0L
                     projectTasks.forEach { task ->
                         if (task.endedAt > 0) {
                             spentTime += task.endedAt - task.startedAt
                         } else {
                             isRunning = true
+                            startTime = task.startedAt
                             spentTime += System.currentTimeMillis() - task.startedAt
                         }
                     }
@@ -69,6 +71,7 @@ class ProjectsInteractor(
                         order = project.order,
                         isRunning = isRunning,
                         spentTime = spentTime,
+                        startTime = startTime,
                         color = project.color,
                         categoryId = project.categoryId
                     )

@@ -19,7 +19,7 @@ class TimerView : AppCompatTextView {
             field = value
             updateText()
         }
-    private var startTime = 0L
+    var startTime = 0L
 
     private var isStarted = false
     private var isRuning = false
@@ -53,7 +53,6 @@ class TimerView : AppCompatTextView {
 
     fun start() {
         isStarted = true
-        startTime = System.currentTimeMillis()
         updateRunning()
     }
 
