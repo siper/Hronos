@@ -12,5 +12,5 @@ interface CategoryDao {
     fun getAll(): Flowable<List<Category>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun put(category: Category)
+    fun put(category: Category): Long
 }

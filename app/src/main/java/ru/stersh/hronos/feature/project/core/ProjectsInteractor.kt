@@ -103,15 +103,30 @@ class ProjectsInteractor(
         }
     }
 
-    fun addProject(title: String, color: Int): Completable {
-        return Completable.fromCallable {
-            projectDao.put(
-                Project(
-                    title = title,
-                    order = -1,
-                    color = color
-                )
-            )
-        }
+    fun addProject(title: String, color: Int, category: String): Completable {
+        return getCategories()
+            .firstOrError()
+            .flatMapCompletable {
+                val categoryId = if (category.trim().isNotEmpty()) {
+                    val cat = it.filter { it.title == category.trim() }
+                    if (cat.isNotEmpty()) {
+                        cat.first().id
+                    } else {
+                        categoryDao.put(Category(title = category))
+                    }
+                } else {
+                    -1
+                }
+                return@flatMapCompletable Completable.fromCallable {
+                    projectDao.put(
+                        Project(
+                            title = title,
+                            order = -1,
+                            color = color,
+                            categoryId = categoryId
+                        )
+                    )
+                }
+            }
     }
 }

@@ -33,6 +33,8 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : RxPresente
                         viewState.showAddProjectButton()
                         return@subscribe
                     }
+                    currentData.clear()
+                    currentData.addAll(it.second)
                     viewState.updateProjects(it.second, it.first)
                     val hasRunningTask = it.second.filter { it.isRunning }.isNotEmpty()
                     if (hasRunningTask) {
@@ -56,12 +58,8 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : RxPresente
                 .subscribe()
                 .addTo(presenterLifecycle)
         } else {
-            interactor
-                .getProjects()
-                .map { it.filter { it.isRunning } }
-                .flatMap {
-                    Flowable.fromIterable(it)
-                }
+            Observable
+                .fromIterable(currentData)
                 .flatMapCompletable { interactor.stopTask(it.id) }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

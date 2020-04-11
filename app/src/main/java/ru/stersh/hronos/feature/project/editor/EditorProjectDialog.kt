@@ -1,9 +1,12 @@
 package ru.stersh.hronos.feature.project.editor
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.dialog_add_project.*
 import moxy.MvpBottomSheetDialogFragment
@@ -44,7 +47,11 @@ class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
                 .filter { it.isSelected }
                 .map { it.id }
                 .firstOrNull() ?: return@setOnClickListener
-            presenter.addProject(project_title.text.toString(), color)
+            presenter.addProject(
+                project_title.text.toString(),
+                color,
+                project_category.text.toString()
+            )
         }
         colors.layoutManager =
             LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
@@ -52,6 +59,17 @@ class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
         adapter.items = resources.getIntArray(R.array.project_colors).mapIndexed { index, i ->
             UiColor(index, i, index == 0)
         }
+        project_category.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                s?.let {
+                    presenter.requestSuggestions(it.toString())
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
     }
 
     override fun done() {
@@ -60,5 +78,14 @@ class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
 
     override fun showError() {
         project_input_layout.error = getString(R.string.project_name_error)
+    }
+
+    override fun fillSuggestions(suggestions: List<String>) {
+        val adapter = ArrayAdapter<String>(
+            requireActivity(),
+            android.R.layout.simple_dropdown_item_1line,
+            suggestions
+        )
+        project_category.setAdapter(adapter)
     }
 }
