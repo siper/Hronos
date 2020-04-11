@@ -14,6 +14,7 @@ object Di : KoinComponent {
         single {
             ProjectsInteractor(
                 get(),
+                get(),
                 get()
             )
         }
@@ -35,5 +36,6 @@ object Di : KoinComponent {
     private val repository = module {
         single { get<HronosDB>().projectDao() }
         single { get<HronosDB>().taskDao() }
+        single { get<HronosDB>().categoryDao() }
     }
 }

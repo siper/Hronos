@@ -5,28 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
 import kotlinx.android.synthetic.main.fragment_projects.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import org.koin.core.get
 import ru.stersh.hronos.R
 import ru.stersh.hronos.core.Di
+import ru.stersh.hronos.feature.category.UiCategory
 import ru.stersh.hronos.feature.project.editor.EditorProjectDialog
 
 class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
     ProjectsView {
     val presenter by moxyPresenter { ProjectsPresenter(Di.get()) }
 
-    val adapter by lazy {
-        ProjectsAdapter(
-            onProjectClick = { project ->
+    val dataProvider = ProjectDataProvider()
 
-            },
-            onStartStopClick = { project ->
-                presenter.onStartStopClick(project)
-            }
-        )
-    }
+    val adapter by lazy { SProjectAdapter(dataProvider) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,14 +34,13 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        content.layoutManager = GridLayoutManager(requireActivity(), 2)
-        content.adapter = adapter
-        content.addItemDecoration(ProjectsDivider())
+        initAdapter()
     }
 
-    override fun updateProjects(projects: List<UiProject>) {
+    override fun updateProjects(projects: List<UiProject>, categories: List<UiCategory>) {
         content.visibility = View.VISIBLE
-        adapter.items = projects
+        dataProvider.setData(projects, categories)
+        adapter.notifyDataSetChanged()
     }
 
     override fun showEmptyView() {}
@@ -66,6 +61,32 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
         project_add_btn.setIconTintResource(R.color.colorWhite)
         project_add_btn.setOnClickListener {
             presenter.stopRunningTask()
+        }
+    }
+
+    private fun initAdapter() {
+        val expandableItemManager = RecyclerViewExpandableItemManager(null)
+        val dragAndDropManager = RecyclerViewDragDropManager().apply {
+            setInitiateOnLongPress(true)
+            setInitiateOnTouch(false)
+            setInitiateOnMove(false)
+        }
+        var wrappedAdapter = expandableItemManager.createWrappedAdapter(adapter)
+        wrappedAdapter = dragAndDropManager.createWrappedAdapter(wrappedAdapter)
+        val layoutManager = GridLayoutManager(requireActivity(), 2)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (adapter.get) {
+                    SProjectAdapter.CHILD_ITEM_ID -> 1
+                    SProjectAdapter.GROUP_ITEM_ID -> 2
+                    else -> 2
+                }
+            }
+        }
+        content.apply {
+            this.layoutManager = layoutManager
+            adapter = wrappedAdapter
+            addItemDecoration(ProjectsDivider())
         }
     }
 }

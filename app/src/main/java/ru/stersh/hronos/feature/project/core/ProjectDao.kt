@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.reactivex.Flowable
 import io.reactivex.Maybe
-import ru.stersh.hronos.core.entity.db.Project
 
 @Dao
 interface ProjectDao {
