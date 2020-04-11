@@ -3,14 +3,17 @@ package ru.stersh.hronos.feature.project.core
 import io.reactivex.Completable
 import io.reactivex.Flowable
 import io.reactivex.functions.BiFunction
-import ru.stersh.hronos.core.entity.db.Project
-import ru.stersh.hronos.core.entity.db.Task
+import ru.stersh.hronos.feature.category.UiCategory
+import ru.stersh.hronos.feature.category.core.Category
+import ru.stersh.hronos.feature.category.core.CategoryDao
 import ru.stersh.hronos.feature.project.main.UiProject
-import ru.stersh.hronos.task.model.repository.TaskDao
+import ru.stersh.hronos.feature.task.core.Task
+import ru.stersh.hronos.feature.task.core.TaskDao
 
 class ProjectsInteractor(
     private val projectDao: ProjectDao,
-    private val taskDao: TaskDao
+    private val taskDao: TaskDao,
+    private val categoryDao: CategoryDao
 ) {
 
     fun changeProjectOrder(project: Project, newOrder: Int): Completable {
@@ -29,6 +32,16 @@ class ProjectsInteractor(
                 result
             }
             .ignoreElements()
+    }
+
+    fun getCategories(): Flowable<List<UiCategory>> {
+        return categoryDao
+            .getAll()
+            .map {
+                val categories = it.toMutableList()
+                categories.add(0, Category(-1, "Unsorted"))
+                return@map categories.map { UiCategory(it.id, it.title) }.toList()
+            }
     }
 
     fun getProjects(): Flowable<List<UiProject>> {
@@ -56,14 +69,15 @@ class ProjectsInteractor(
                         order = project.order,
                         isRunning = isRunning,
                         spentTime = spentTime,
-                        color = project.color
+                        color = project.color,
+                        categoryId = project.categoryId
                     )
                 }
             }
         )
     }
 
-    fun stopTask(projectId: Int): Completable {
+    fun stopTask(projectId: Long): Completable {
         return taskDao
             .getByProjectId(projectId)
             .map { it.filter { it.endedAt == 0L } }
@@ -76,7 +90,7 @@ class ProjectsInteractor(
             .ignoreElement()
     }
 
-    fun startTask(projectId: Int): Completable {
+    fun startTask(projectId: Long): Completable {
         return Completable.fromCallable {
             taskDao.put(
                 Task(
@@ -89,9 +103,30 @@ class ProjectsInteractor(
         }
     }
 
-    fun addProject(title: String, color: Int): Completable {
-        return Completable.fromCallable {
-            projectDao.put(Project(title = title, order = -1, color = color))
-        }
+    fun addProject(title: String, color: Int, category: String): Completable {
+        return getCategories()
+            .firstOrError()
+            .flatMapCompletable {
+                val categoryId = if (category.trim().isNotEmpty()) {
+                    val cat = it.filter { it.title == category.trim() }
+                    if (cat.isNotEmpty()) {
+                        cat.first().id
+                    } else {
+                        categoryDao.put(Category(title = category))
+                    }
+                } else {
+                    -1
+                }
+                return@flatMapCompletable Completable.fromCallable {
+                    projectDao.put(
+                        Project(
+                            title = title,
+                            order = -1,
+                            color = color,
+                            categoryId = categoryId
+                        )
+                    )
+                }
+            }
     }
 }

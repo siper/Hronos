@@ -35,4 +35,9 @@
         <item name="fontPath">fonts/Montserrat-Bold.ttf</item>
     </style>
 
+    <style name="AutoCompleteTextView" parent="Widget.MaterialComponents.AutoCompleteTextView.OutlinedBox">
+        <item name="android:paddingTop">13dp</item>
+        <item name="android:paddingBottom">13dp</item>
+    </style>
+
 </resources>

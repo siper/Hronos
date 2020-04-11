@@ -11,10 +11,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
         android:hint="@string/project_name"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/done"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,8 +22,7 @@
             android:id="@+id/project_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:imeOptions="actionDone|flagNoExtractUi"
+            android:imeOptions="actionNext|flagNoExtractUi"
             android:inputType="textNoSuggestions" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -40,12 +38,36 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/project_input_layout" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/category_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:hint="@string/project_category"
+        app:layout_constraintEnd_toStartOf="@+id/done"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/project_input_layout">
+
+        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+            android:id="@+id/project_category"
+            style="@style/AutoCompleteTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:dropDownHeight="100dp"
+            android:imeOptions="actionDone|flagNoExtractUi" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/colors"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/project_input_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/category_input_layout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
