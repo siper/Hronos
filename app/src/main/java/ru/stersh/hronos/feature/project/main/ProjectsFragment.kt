@@ -15,16 +15,15 @@ import ru.stersh.hronos.core.Di
 import ru.stersh.hronos.feature.category.UiCategory
 import ru.stersh.hronos.feature.project.editor.EditorProjectDialog
 
-class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects),
-    ProjectsView {
-    val presenter by moxyPresenter { ProjectsPresenter(Di.get()) }
+class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), ProjectsView {
+    private val presenter by moxyPresenter { ProjectsPresenter(Di.get()) }
 
-    val adapter by lazy { SectionedRecyclerViewAdapter() }
+    private val adapter by lazy { SectionedRecyclerViewAdapter() }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_projects, container, false)
     }
