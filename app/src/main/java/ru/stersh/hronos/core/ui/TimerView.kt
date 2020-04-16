@@ -20,6 +20,10 @@ class TimerView : AppCompatTextView {
             updateText()
         }
     var startTime = 0L
+        set(value) {
+            field = value
+            updateText()
+        }
 
     private var isStarted = false
     private var isRuning = false
