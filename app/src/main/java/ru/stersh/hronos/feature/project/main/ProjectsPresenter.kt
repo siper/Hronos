@@ -11,18 +11,24 @@ import ru.stersh.hronos.feature.project.core.ProjectsInteractor
 class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresenter<ProjectsView>() {
 
     override fun onFirstViewAttach() {
+        var hasRunningTask = false
         interactor
             .getCategories()
             .combine(interactor.getProjects()) { categories, projects ->
-                return@combine Pair(categories, projects)
+                hasRunningTask = projects.any { it.isRunning }
+                return@combine categories.map { category ->
+                    ProjectSection(
+                        category,
+                        projects.filter { it.categoryId == category.id }
+                    ) { project -> onStartStopClick(project) }
+                }
             }.onEach {
-                if (it.second.isEmpty()) {
+                if (it.isEmpty()) {
                     viewState.showEmptyView()
                     viewState.showAddProjectButton()
                     return@onEach
                 }
-                viewState.updateProjects(it.second, it.first)
-                val hasRunningTask = it.second.filter { it.isRunning }.isNotEmpty()
+                viewState.updateSections(it)
                 if (hasRunningTask) {
                     viewState.showStopTaskButton()
                 } else {

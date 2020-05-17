@@ -34,14 +34,9 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), Proje
         initAdapter()
     }
 
-    override fun updateProjects(projects: List<UiProject>, categories: List<UiCategory>) {
+    override fun updateSections(sections: List<ProjectSection>) {
         content.visibility = View.VISIBLE
         adapter.removeAllSections()
-        val sections = categories.map { category ->
-            ProjectSection(category, projects.filter { it.categoryId == category.id }) {
-                presenter.onStartStopClick(it)
-            }
-        }
         sections.forEach {
             adapter.addSection(it)
         }
