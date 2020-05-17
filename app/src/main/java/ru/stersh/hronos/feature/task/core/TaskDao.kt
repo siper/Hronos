@@ -4,16 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM ${Task.TASK_TABLE}")
-    fun getAll(): Flowable<List<Task>>
+    fun getAll(): Flow<List<Task>>
 
     @Query("SELECT * FROM ${Task.TASK_TABLE} WHERE projectId = :projectId")
-    fun getByProjectId(projectId: Long): Flowable<List<Task>>
+    suspend fun getByProjectId(projectId: Long): List<Task>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun put(task: Task)
+    suspend fun put(vararg task: Task)
 }

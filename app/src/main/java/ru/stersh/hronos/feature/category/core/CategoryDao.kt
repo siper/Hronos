@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.reactivex.Flowable
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CategoryDao {
     @Query("SELECT * FROM ${Category.CATEGORIES_TABLE}")
-    fun getAll(): Flowable<List<Category>>
+    fun getAll(): Flow<List<Category>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun put(category: Category): Long
+    suspend fun put(category: Category): Long
 }

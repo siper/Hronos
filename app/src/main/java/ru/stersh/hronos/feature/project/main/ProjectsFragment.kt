@@ -64,7 +64,7 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), Proje
         project_add_btn.setIconResource(R.drawable.ic_stop)
         project_add_btn.setIconTintResource(R.color.colorWhite)
         project_add_btn.setOnClickListener {
-            presenter.stopRunningTask()
+            presenter.stopRunningTasks()
         }
     }
 

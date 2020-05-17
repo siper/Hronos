@@ -1,8 +1,7 @@
 package ru.stersh.hronos.feature.project.core
 
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.functions.BiFunction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
 import ru.stersh.hronos.feature.category.UiCategory
 import ru.stersh.hronos.feature.category.core.Category
 import ru.stersh.hronos.feature.category.core.CategoryDao
@@ -16,25 +15,19 @@ class ProjectsInteractor(
     private val categoryDao: CategoryDao
 ) {
 
-    fun changeProjectOrder(project: Project, newOrder: Int): Completable {
-        return projectDao
-            .getAllProjects()
-            .map {
-                val result = it.toMutableList().apply {
-                    remove(project)
-                    add(newOrder, project)
-                    mapIndexed { index, project ->
-                        project.copy(order = index)
-                    }
-                    toList()
-                }
-                projectDao.putAll(*it.toTypedArray())
-                result
-            }
-            .ignoreElements()
-    }
+//    suspend fun changeProjectOrder(project: Project, newOrder: Int) {
+//        val projects = projectDao
+//            .getAllProjects()
+//            .map { it.sortedByDescending { it.order } }
+//            .sortedByDescending { it.order }
+//            .toMutableList()
+//        projects.remove(project)
+//        projects.add(newOrder, project.copy(order = newOrder))
+//        projects.mapIndexed { index, p -> p.copy(order = index) }
+//        projectDao.putAll(*projects.toTypedArray())
+//    }
 
-    fun getCategories(): Flowable<List<UiCategory>> {
+    fun getCategories(): Flow<List<UiCategory>> {
         return categoryDao
             .getAll()
             .map {
@@ -44,92 +37,85 @@ class ProjectsInteractor(
             }
     }
 
-    fun getProjects(): Flowable<List<UiProject>> {
-        val tasks = taskDao.getAll()
-        val projects = projectDao.getAllProjects()
-        return Flowable.combineLatest(
-            projects,
-            tasks,
-            BiFunction { p, t ->
-                p.map { project ->
-                    val projectTasks = t.filter { it.projectId == project.id }
-                    var spentTime = 0L
-                    var isRunning = false
-                    var startTime = 0L
-                    projectTasks.forEach { task ->
-                        if (task.endedAt > 0) {
-                            spentTime += task.endedAt - task.startedAt
-                        } else {
-                            isRunning = true
-                            startTime = task.startedAt
-                            spentTime += System.currentTimeMillis() - task.startedAt
-                        }
+    fun getProjects(): Flow<List<UiProject>> {
+        return projectDao.getAllProjects().combine(taskDao.getAll()) { projects, tasks ->
+            return@combine projects.map { project ->
+                val projectTasks = tasks.filter { it.projectId == project.id }
+                var spentTime = 0L
+                var isRunning = false
+                var startTime = 0L
+                projectTasks.forEach { task ->
+                    if (task.endedAt > 0) {
+                        spentTime += task.endedAt - task.startedAt
+                    } else {
+                        isRunning = true
+                        startTime = task.startedAt
+                        spentTime += System.currentTimeMillis() - task.startedAt
                     }
-                    return@map UiProject(
-                        id = project.id,
-                        title = project.title,
-                        order = project.order,
-                        isRunning = isRunning,
-                        spentTime = spentTime,
-                        startTime = startTime,
-                        color = project.color,
-                        categoryId = project.categoryId
-                    )
                 }
-            }
-        )
-    }
-
-    fun stopTask(projectId: Long): Completable {
-        return taskDao
-            .getByProjectId(projectId)
-            .map { it.filter { it.endedAt == 0L } }
-            .firstElement()
-            .doOnSuccess { tasks ->
-                tasks.forEach { task ->
-                    taskDao.put(task.copy(endedAt = System.currentTimeMillis()))
-                }
-            }
-            .ignoreElement()
-    }
-
-    fun startTask(projectId: Long): Completable {
-        return Completable.fromCallable {
-            taskDao.put(
-                Task(
-                    projectId = projectId,
-                    title = "",
-                    endedAt = 0L,
-                    startedAt = System.currentTimeMillis()
+                return@map UiProject(
+                    id = project.id,
+                    title = project.title,
+                    order = project.order,
+                    isRunning = isRunning,
+                    spentTime = spentTime,
+                    startTime = startTime,
+                    color = project.color,
+                    categoryId = project.categoryId
                 )
-            )
+            }
         }
     }
 
-    fun addProject(title: String, color: Int, category: String): Completable {
-        return getCategories()
-            .firstOrError()
-            .flatMapCompletable {
-                val categoryId = if (category.trim().isNotEmpty()) {
-                    val cat = it.filter { it.title == category.trim() }
-                    if (cat.isNotEmpty()) {
-                        cat.first().id
-                    } else {
-                        categoryDao.put(Category(title = category))
-                    }
-                } else {
-                    -1
-                }
-                return@flatMapCompletable Completable.fromCallable {
-                    projectDao.put(
-                        Project(
-                            title = title,
-                            order = -1,
-                            color = color,
-                            categoryId = categoryId
-                        )
-                    )
-                }
+    suspend fun stopTask(projectId: Long) {
+        val tasks = taskDao
+            .getByProjectId(projectId)
+            .filter { it.endedAt == 0L }
+            .map { it.copy(endedAt = System.currentTimeMillis()) }
+        tasks.forEach { task ->
+            taskDao.put(task.copy(endedAt = System.currentTimeMillis()))
+        }
+    }
+
+    suspend fun stopRunningTasks() {
+        val tasks = taskDao
+            .getAll()
+            .first()
+            .filter { it.endedAt == 0L }
+            .map { it.copy(endedAt = System.currentTimeMillis()) }
+        taskDao.put(*tasks.toTypedArray())
+    }
+
+    suspend fun startTask(projectId: Long) {
+        taskDao.put(
+            Task(
+                projectId = projectId,
+                title = "",
+                endedAt = 0L,
+                startedAt = System.currentTimeMillis()
+            )
+        )
+    }
+
+    suspend fun addProject(title: String, color: Int, category: String) {
+        val categories = getCategories().first()
+        val categoryId = if (category.trim().isNotEmpty()) {
+            val cat = categories.filter { it.title == category.trim() }
+            if (cat.isNotEmpty()) {
+                cat.first().id
+            } else {
+                categoryDao.put(Category(title = category))
             }
+        } else {
+            -1
+        }
+        projectDao.put(
+            Project(
+                title = title,
+                order = -1,
+                color = color,
+                categoryId = categoryId
+            )
+        )
     }
 }

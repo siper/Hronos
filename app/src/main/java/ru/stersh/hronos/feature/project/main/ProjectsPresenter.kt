@@ -1,98 +1,48 @@
 package ru.stersh.hronos.feature.project.main
 
-import io.reactivex.Flowable
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.schedulers.Schedulers
-import ru.stersh.hronos.core.RxPresenter
-import ru.stersh.hronos.feature.category.UiCategory
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import moxy.MvpPresenter
+import moxy.presenterScope
 import ru.stersh.hronos.feature.project.core.ProjectsInteractor
-import timber.log.Timber
 
-class ProjectsPresenter(private val interactor: ProjectsInteractor) : RxPresenter<ProjectsView>() {
-    private val currentData = mutableListOf<UiProject>()
+class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresenter<ProjectsView>() {
 
     override fun onFirstViewAttach() {
-        val categories = interactor.getCategories()
-        val projects = interactor.getProjects()
-        Flowable.combineLatest(
-            categories,
-            projects,
-            BiFunction<List<UiCategory>, List<UiProject>, Pair<List<UiCategory>, List<UiProject>>> { c, p ->
-                return@BiFunction Pair(c, p)
-            }
-        )
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    if (it.second.isEmpty()) {
-                        viewState.showEmptyView()
-                        viewState.showAddProjectButton()
-                        return@subscribe
-                    }
-                    currentData.clear()
-                    currentData.addAll(it.second)
-                    viewState.updateProjects(it.second, it.first)
-                    val hasRunningTask = it.second.filter { it.isRunning }.isNotEmpty()
-                    if (hasRunningTask) {
-                        viewState.showStopTaskButton()
-                    } else {
-                        viewState.showAddProjectButton()
-                    }
-                },
-                {
-                    Timber.e(it)
+        interactor
+            .getCategories()
+            .combine(interactor.getProjects()) { categories, projects ->
+                return@combine Pair(categories, projects)
+            }.onEach {
+                if (it.second.isEmpty()) {
+                    viewState.showEmptyView()
+                    viewState.showAddProjectButton()
+                    return@onEach
                 }
-            )
-            .addTo(presenterLifecycle)
+                viewState.updateProjects(it.second, it.first)
+                val hasRunningTask = it.second.filter { it.isRunning }.isNotEmpty()
+                if (hasRunningTask) {
+                    viewState.showStopTaskButton()
+                } else {
+                    viewState.showAddProjectButton()
+                }
+            }
+            .launchIn(presenterScope)
     }
 
-    fun onStartStopClick(project: UiProject) {
+    fun onStartStopClick(project: UiProject) = presenterScope.launch {
         if (project.isRunning) {
-            interactor
-                .stopTask(project.id)
-                .subscribeOn(Schedulers.io())
-                .subscribe()
-                .addTo(presenterLifecycle)
+            interactor.stopTask(project.id)
         } else {
-            Observable
-                .fromIterable(currentData)
-                .flatMapCompletable { interactor.stopTask(it.id) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        interactor
-                            .startTask(project.id)
-                            .subscribeOn(Schedulers.io())
-                            .subscribe()
-                            .addTo(presenterLifecycle)
-                    },
-                    {
-                        Timber.e(it)
-                    }
-                )
-                .addTo(presenterLifecycle)
+            interactor.stopRunningTasks()
+            interactor.startTask(project.id)
         }
     }
 
-    fun stopRunningTask() {
-        Observable
-            .fromIterable(currentData.filter { it.isRunning })
-            .subscribeOn(Schedulers.io())
-            .flatMapCompletable { interactor.stopTask(it.id) }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
 
-                },
-                {
-                    Timber.e(it)
-                }
-            )
-            .addTo(presenterLifecycle)
+    fun stopRunningTasks() = presenterScope.launch {
+        interactor.stopRunningTasks()
     }
 }

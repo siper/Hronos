@@ -4,20 +4,19 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.reactivex.Flowable
-import io.reactivex.Maybe
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ProjectDao {
     @Query("SELECT * FROM ${Project.PROJECTS_TABLE}")
-    fun getAllProjects(): Flowable<List<Project>>
+    fun getAllProjects(): Flow<List<Project>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun put(project: Project)
+    suspend fun put(project: Project)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun putAll(vararg projects: Project)
+    suspend fun putAll(vararg projects: Project)
 
     @Query("SELECT * FROM ${Project.PROJECTS_TABLE} WHERE id = :id")
-    fun getProject(id: Int): Maybe<Project>
+    suspend fun getProject(id: Int): Project?
 }
