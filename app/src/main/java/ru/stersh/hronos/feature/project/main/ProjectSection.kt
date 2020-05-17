@@ -26,6 +26,7 @@ class ProjectSection(
         val item = data[position]
         val colors = holder.itemView.resources.getIntArray(R.array.project_colors)
         holder.title.text = item.title
+        holder.timeSpent.setTextColor(colors[item.color])
         holder.timeSpent.apply {
             baseTime = item.spentTime
             startTime = item.startTime
