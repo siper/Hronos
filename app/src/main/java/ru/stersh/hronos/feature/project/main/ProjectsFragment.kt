@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_projects.*
 import moxy.MvpAppCompatFragment
@@ -69,15 +70,7 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), Proje
     }
 
     private fun initAdapter() {
-        val layoutManager = GridLayoutManager(requireActivity(), 2)
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return when (adapter.getSectionItemViewType(position)) {
-                    SectionedRecyclerViewAdapter.VIEW_TYPE_HEADER -> 2
-                    else -> 1
-                }
-            }
-        }
+        val layoutManager = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
         content.apply {
             this.layoutManager = layoutManager
             this.adapter = this@ProjectsFragment.adapter

@@ -25,11 +25,7 @@ class ProjectSection(
         if (holder !is ProjectViewHolder) return
         val item = data[position]
         val colors = holder.itemView.resources.getIntArray(R.array.project_colors)
-        val alphaColors = holder.itemView.resources.getIntArray(R.array.project_alpha_colors)
-        holder.root.setCardBackgroundColor(alphaColors[item.color])
         holder.title.text = item.title
-        holder.title.setTextColor(colors[item.color])
-        holder.timeSpent.setTextColor(colors[item.color])
         holder.timeSpent.apply {
             baseTime = item.spentTime
             startTime = item.startTime
