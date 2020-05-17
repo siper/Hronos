@@ -16,6 +16,7 @@ class Hronos : Application() {
         initKoin()
         initThreeTeen()
         initStetho()
+        initCalligraphy()
     }
 
     private fun initThreeTeen() {
