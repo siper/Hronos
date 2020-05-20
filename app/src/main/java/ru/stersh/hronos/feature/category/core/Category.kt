@@ -12,5 +12,8 @@ data class Category(
 ) {
     companion object {
         const val CATEGORIES_TABLE = "categories"
+
+        const val INCOMING_ID = 1L
+        const val FAVORITE_ID = 2L
     }
 }

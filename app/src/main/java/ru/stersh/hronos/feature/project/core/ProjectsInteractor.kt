@@ -2,6 +2,7 @@ package ru.stersh.hronos.feature.project.core
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import ru.stersh.hronos.core.data.HronosDB
 import ru.stersh.hronos.feature.category.UiCategory
 import ru.stersh.hronos.feature.category.core.Category
 import ru.stersh.hronos.feature.category.core.CategoryDao
@@ -30,10 +31,8 @@ class ProjectsInteractor(
     fun getCategories(): Flow<List<UiCategory>> {
         return categoryDao
             .getAll()
-            .map {
-                val categories = it.toMutableList()
-                categories.add(0, Category(-1, "Unsorted"))
-                return@map categories.map { UiCategory(it.id, it.title) }.toList()
+            .map { categories ->
+                categories.map { UiCategory(it.id, it.title) }
             }
     }
 
@@ -67,35 +66,25 @@ class ProjectsInteractor(
         }
     }
 
+    fun hasRunningTasks(): Flow<Boolean> {
+        return taskDao.runningCount().map { it > 0 }
+    }
+
     suspend fun stopTask(projectId: Long) {
         val tasks = taskDao
-            .getByProjectId(projectId)
-            .filter { it.endedAt == 0L }
-            .map { it.copy(endedAt = System.currentTimeMillis()) }
-        tasks.forEach { task ->
-            taskDao.put(task.copy(endedAt = System.currentTimeMillis()))
-        }
+            .getRunning(projectId)
+            .map { it.end() }
+        taskDao.put(tasks)
     }
 
     suspend fun stopRunningTasks() {
         val tasks = taskDao
-            .getAll()
-            .first()
-            .filter { it.endedAt == 0L }
-            .map { it.copy(endedAt = System.currentTimeMillis()) }
-        taskDao.put(*tasks.toTypedArray())
+            .getRunning()
+            .map { it.end() }
+        taskDao.put(tasks)
     }
 
-    suspend fun startTask(projectId: Long) {
-        taskDao.put(
-            Task(
-                projectId = projectId,
-                title = "",
-                endedAt = 0L,
-                startedAt = System.currentTimeMillis()
-            )
-        )
-    }
+    suspend fun startTask(projectId: Long) = taskDao.startTask(projectId)
 
     suspend fun addProject(title: String, color: Int, category: String) {
         val categories = getCategories().first()
@@ -107,7 +96,7 @@ class ProjectsInteractor(
                 categoryDao.put(Category(title = category))
             }
         } else {
-            -1
+            Category.INCOMING_ID
         }
         projectDao.put(
             Project(
