@@ -42,7 +42,7 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresent
         if (project.isRunning) {
             interactor.stopTask(project.id)
         } else {
-            interactor.startTask(project.id)
+            interactor.stopRuningAndStartTask(project.id)
         }
     }
 

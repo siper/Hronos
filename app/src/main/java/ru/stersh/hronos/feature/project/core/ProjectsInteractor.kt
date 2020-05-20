@@ -84,7 +84,14 @@ class ProjectsInteractor(
         taskDao.put(tasks)
     }
 
-    suspend fun startTask(projectId: Long) = taskDao.startTask(projectId)
+    suspend fun stopRuningAndStartTask(projectId: Long) {
+        val tasks = taskDao
+            .getRunning()
+            .map { it.end() }
+            .toMutableList()
+            .apply { add(Task.start(projectId)) }
+        taskDao.put(tasks)
+    }
 
     suspend fun addProject(title: String, color: Int, category: String) {
         val categories = getCategories().first()
