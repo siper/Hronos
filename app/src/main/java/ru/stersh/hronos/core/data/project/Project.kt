@@ -1,8 +1,8 @@
-package ru.stersh.hronos.feature.project.core
+package ru.stersh.hronos.core.data.project
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.stersh.hronos.feature.project.core.Project.Companion.PROJECTS_TABLE
+import ru.stersh.hronos.core.data.project.Project.Companion.PROJECTS_TABLE
 
 @Entity(tableName = PROJECTS_TABLE)
 data class Project(

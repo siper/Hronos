@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import kotlinx.android.synthetic.main.fragment_projects.*
@@ -13,7 +12,6 @@ import moxy.ktx.moxyPresenter
 import org.koin.core.get
 import ru.stersh.hronos.R
 import ru.stersh.hronos.core.Di
-import ru.stersh.hronos.feature.category.UiCategory
 import ru.stersh.hronos.feature.project.editor.EditorProjectDialog
 
 class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), ProjectsView {

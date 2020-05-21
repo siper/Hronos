@@ -3,8 +3,7 @@ package ru.stersh.hronos.feature.project.main
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
-import ru.stersh.musicmagician.extention.dp
+import ru.stersh.hronos.extention.dp
 
 class ProjectsDivider(private val margin: Int = 16.dp) : RecyclerView.ItemDecoration() {
 

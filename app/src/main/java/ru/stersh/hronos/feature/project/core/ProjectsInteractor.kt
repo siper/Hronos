@@ -1,14 +1,17 @@
 package ru.stersh.hronos.feature.project.core
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import ru.stersh.hronos.core.data.HronosDB
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import ru.stersh.hronos.core.data.category.Category
+import ru.stersh.hronos.core.data.category.CategoryDao
+import ru.stersh.hronos.core.data.project.Project
+import ru.stersh.hronos.core.data.project.ProjectDao
+import ru.stersh.hronos.core.data.task.Task
+import ru.stersh.hronos.core.data.task.TaskDao
 import ru.stersh.hronos.feature.category.UiCategory
-import ru.stersh.hronos.feature.category.core.Category
-import ru.stersh.hronos.feature.category.core.CategoryDao
 import ru.stersh.hronos.feature.project.main.UiProject
-import ru.stersh.hronos.feature.task.core.Task
-import ru.stersh.hronos.feature.task.core.TaskDao
 
 class ProjectsInteractor(
     private val projectDao: ProjectDao,
@@ -100,7 +103,11 @@ class ProjectsInteractor(
             if (cat.isNotEmpty()) {
                 cat.first().id
             } else {
-                categoryDao.put(Category(title = category))
+                categoryDao.put(
+                    Category(
+                        title = category
+                    )
+                )
             }
         } else {
             Category.INCOMING_ID

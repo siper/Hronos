@@ -1,8 +1,8 @@
-package ru.stersh.hronos.feature.task.core
+package ru.stersh.hronos.core.data.task
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.stersh.hronos.feature.task.core.Task.Companion.TASK_TABLE
+import ru.stersh.hronos.core.data.task.Task.Companion.TASK_TABLE
 
 @Entity(tableName = TASK_TABLE)
 data class Task(

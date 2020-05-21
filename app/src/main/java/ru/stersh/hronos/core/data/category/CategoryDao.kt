@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.category.core
+package ru.stersh.hronos.core.data.category
 
 import androidx.room.Dao
 import androidx.room.Insert
