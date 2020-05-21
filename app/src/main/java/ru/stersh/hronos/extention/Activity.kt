@@ -1,4 +1,4 @@
-package ru.stersh.musicmagician.extention
+package ru.stersh.hronos.extention
 
 import android.content.Context
 import android.content.pm.PackageManager
