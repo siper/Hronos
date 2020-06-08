@@ -19,18 +19,6 @@ class ProjectsInteractor(
     private val categoryDao: CategoryDao
 ) {
 
-//    suspend fun changeProjectOrder(project: Project, newOrder: Int) {
-//        val projects = projectDao
-//            .getAllProjects()
-//            .map { it.sortedByDescending { it.order } }
-//            .sortedByDescending { it.order }
-//            .toMutableList()
-//        projects.remove(project)
-//        projects.add(newOrder, project.copy(order = newOrder))
-//        projects.mapIndexed { index, p -> p.copy(order = index) }
-//        projectDao.putAll(*projects.toTypedArray())
-//    }
-
     fun getCategories(): Flow<List<UiCategory>> {
         return categoryDao
             .getAll()

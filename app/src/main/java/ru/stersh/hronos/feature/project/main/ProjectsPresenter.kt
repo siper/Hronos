@@ -1,6 +1,8 @@
 package ru.stersh.hronos.feature.project.main
 
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.MvpPresenter
 import moxy.presenterScope
@@ -10,15 +12,19 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresent
 
     override fun onFirstViewAttach() {
         interactor
-            .getCategories()
-            .combine(interactor.getProjects()) { categories, projects ->
-                return@combine categories.map { category ->
-                    ProjectSection(
-                        category,
-                        projects.filter { it.categoryId == category.id }
-                    ) { project -> onStartStopClick(project) }
-                }
-            }.onEach {
+            .getProjects()
+            .combine(interactor.getCategories()) { projects, categories ->
+                return@combine categories
+                    .map { category ->
+                        ProjectSection(
+                            category,
+                            projects.filter { it.categoryId == category.id },
+                            ::onStartStopClick
+                        )
+                    }
+                    .filter { it.data.isNotEmpty() }
+            }
+            .onEach {
                 if (it.isEmpty()) {
                     viewState.showEmptyView()
                 } else {
@@ -38,15 +44,17 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresent
             .launchIn(presenterScope)
     }
 
-    fun onStartStopClick(project: UiProject) = presenterScope.launch {
-        if (project.isRunning) {
-            interactor.stopTask(project.id)
-        } else {
-            interactor.stopRuningAndStartTask(project.id)
-        }
-    }
-
     fun stopRunningTasks() = presenterScope.launch {
         interactor.stopRunningTasks()
+    }
+
+    private fun onStartStopClick(project: UiProject) {
+        presenterScope.launch {
+            if (project.isRunning) {
+                interactor.stopTask(project.id)
+            } else {
+                interactor.stopRuningAndStartTask(project.id)
+            }
+        }
     }
 }
