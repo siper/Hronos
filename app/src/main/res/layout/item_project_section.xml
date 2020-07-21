@@ -13,6 +13,7 @@
         android:singleLine="true"
         android:textColor="@color/text_primary"
         android:textSize="16sp"
+        android:layout_margin="16dp"
         fontPath="fonts/Montserrat-Bold.ttf"
         tools:text="Имя секции" />
 </LinearLayout>
