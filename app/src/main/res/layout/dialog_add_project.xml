@@ -14,7 +14,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:hint="@string/project_name"
-        app:layout_constraintEnd_toStartOf="@+id/done"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -26,18 +26,6 @@
             android:inputType="textNoSuggestions" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <ImageView
-        android:id="@+id/done"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginEnd="16dp"
-        android:background="?selectableItemBackground"
-        android:src="@drawable/ic_check_black_24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/project_input_layout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/project_input_layout" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/category_input_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -48,7 +36,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
         android:hint="@string/project_category"
-        app:layout_constraintEnd_toStartOf="@+id/done"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/project_input_layout">
 
@@ -66,8 +54,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/category_input_layout" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/done"
+        style="@style/FilledButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/create"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colors" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

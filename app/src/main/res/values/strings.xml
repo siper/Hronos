@@ -8,4 +8,5 @@
     <string name="stop_task_title">Stop</string>
     <string name="incoming_title">Incoming</string>
     <string name="favorite_title">Favorite</string>
+    <string name="create">Create</string>
 </resources>
