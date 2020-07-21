@@ -1,31 +1,20 @@
-package ru.stersh.hronos.feature.project.core
+package ru.stersh.hronos.feature.project
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import ru.stersh.hronos.core.data.category.Category
 import ru.stersh.hronos.core.data.category.CategoryDao
 import ru.stersh.hronos.core.data.project.Project
 import ru.stersh.hronos.core.data.project.ProjectDao
-import ru.stersh.hronos.core.data.task.Task
 import ru.stersh.hronos.core.data.task.TaskDao
-import ru.stersh.hronos.feature.category.UiCategory
-import ru.stersh.hronos.feature.project.main.UiProject
+import ru.stersh.hronos.ui.project.main.UiProject
 
-class ProjectsInteractor(
+class ProjectInteractor(
     private val projectDao: ProjectDao,
     private val taskDao: TaskDao,
     private val categoryDao: CategoryDao
 ) {
-
-    fun getCategories(): Flow<List<UiCategory>> {
-        return categoryDao
-            .getAll()
-            .map { categories ->
-                categories.map { UiCategory(it.id, it.title) }
-            }
-    }
 
     fun getProjects(): Flow<List<UiProject>> {
         return projectDao.getAllProjects().combine(taskDao.getAll()) { projects, tasks ->
@@ -57,35 +46,8 @@ class ProjectsInteractor(
         }
     }
 
-    fun hasRunningTasks(): Flow<Boolean> {
-        return taskDao.runningCount().map { it > 0 }
-    }
-
-    suspend fun stopTask(projectId: Long) {
-        val tasks = taskDao
-            .getRunning(projectId)
-            .map { it.end() }
-        taskDao.put(tasks)
-    }
-
-    suspend fun stopRunningTasks() {
-        val tasks = taskDao
-            .getRunning()
-            .map { it.end() }
-        taskDao.put(tasks)
-    }
-
-    suspend fun stopRuningAndStartTask(projectId: Long) {
-        val tasks = taskDao
-            .getRunning()
-            .map { it.end() }
-            .toMutableList()
-            .apply { add(Task.start(projectId)) }
-        taskDao.put(tasks)
-    }
-
     suspend fun addProject(title: String, color: Int, category: String) {
-        val categories = getCategories().first()
+        val categories = categoryDao.getAll().first()
         val categoryId = if (category.trim().isNotEmpty()) {
             val cat = categories.filter { it.title == category.trim() }
             if (cat.isNotEmpty()) {

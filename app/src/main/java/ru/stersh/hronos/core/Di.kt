@@ -11,7 +11,9 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import ru.stersh.hronos.core.data.DBHelper
 import ru.stersh.hronos.core.data.HronosDB
-import ru.stersh.hronos.feature.project.core.ProjectsInteractor
+import ru.stersh.hronos.feature.category.CategoryInteractor
+import ru.stersh.hronos.feature.project.ProjectInteractor
+import ru.stersh.hronos.feature.task.TaskInteractor
 
 object Di : KoinComponent {
     private val modules by lazy { listOf(interactor, data, repository) }
@@ -24,7 +26,9 @@ object Di : KoinComponent {
     }
 
     private val interactor = module {
-        single { ProjectsInteractor(get(), get(), get()) }
+        single { ProjectInteractor(get(), get(), get()) }
+        single { TaskInteractor(get()) }
+        single { CategoryInteractor(get()) }
     }
 
     private val data = module {

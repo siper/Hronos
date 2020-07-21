@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.main
+package ru.stersh.hronos.ui.project.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,13 +9,14 @@ import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapt
 import kotlinx.android.synthetic.main.fragment_projects.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
+import org.koin.android.ext.android.get
 import org.koin.core.get
 import ru.stersh.hronos.R
 import ru.stersh.hronos.core.Di
-import ru.stersh.hronos.feature.project.editor.EditorProjectDialog
+import ru.stersh.hronos.ui.project.editor.EditorProjectDialog
 
 class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), ProjectsView {
-    private val presenter by moxyPresenter { ProjectsPresenter(Di.get()) }
+    private val presenter by moxyPresenter { ProjectsPresenter(Di.get(), get(), get()) }
 
     private val adapter by lazy { SectionedRecyclerViewAdapter() }
 

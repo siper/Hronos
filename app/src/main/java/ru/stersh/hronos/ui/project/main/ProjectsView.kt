@@ -1,9 +1,8 @@
-package ru.stersh.hronos.feature.project.main
+package ru.stersh.hronos.ui.project.main
 
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle
 import moxy.viewstate.strategy.alias.SingleState
-import ru.stersh.hronos.feature.category.UiCategory
 
 interface ProjectsView : MvpView {
     @SingleState

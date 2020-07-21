@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.main
+package ru.stersh.hronos.ui.project.main
 
 import android.view.View
 import android.widget.LinearLayout

@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.editor
+package ru.stersh.hronos.ui.project.editor
 
 import android.content.res.ColorStateList
 import android.widget.FrameLayout

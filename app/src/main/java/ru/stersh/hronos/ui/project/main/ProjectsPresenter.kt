@@ -1,29 +1,37 @@
-package ru.stersh.hronos.feature.project.main
+package ru.stersh.hronos.ui.project.main
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import moxy.MvpPresenter
 import moxy.presenterScope
-import ru.stersh.hronos.feature.project.core.ProjectsInteractor
+import ru.stersh.hronos.feature.category.CategoryInteractor
+import ru.stersh.hronos.feature.project.ProjectInteractor
+import ru.stersh.hronos.feature.task.TaskInteractor
 
-class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresenter<ProjectsView>() {
+class ProjectsPresenter(
+    private val projectInteractor: ProjectInteractor,
+    private val categoryInteractor: CategoryInteractor,
+    private val tasksInteractor: TaskInteractor
+) : MvpPresenter<ProjectsView>() {
 
     override fun onFirstViewAttach() {
-        interactor
+        projectInteractor
             .getProjects()
-            .combine(interactor.getCategories()) { projects, categories ->
+            .combine(categoryInteractor.getCategories()) { projects, categories ->
                 return@combine categories
                     .map { category ->
                         ProjectSection(
                             category,
-                            projects.filter { it.categoryId == category.id },
-                            ::onStartStopClick
-                        )
+                            projects.filter { it.categoryId == category.id }
+                        ) { onStartStopClick(it) }
                     }
                     .filter { it.data.isNotEmpty() }
             }
+            .flowOn(Dispatchers.IO)
             .onEach {
                 if (it.isEmpty()) {
                     viewState.showEmptyView()
@@ -32,8 +40,9 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresent
                 }
             }
             .launchIn(presenterScope)
-        interactor
+        tasksInteractor
             .hasRunningTasks()
+            .flowOn(Dispatchers.IO)
             .onEach {
                 if (it) {
                     viewState.showStopTaskButton()
@@ -45,16 +54,14 @@ class ProjectsPresenter(private val interactor: ProjectsInteractor) : MvpPresent
     }
 
     fun stopRunningTasks() = presenterScope.launch {
-        interactor.stopRunningTasks()
+        tasksInteractor.stopRunningTasks()
     }
 
-    private fun onStartStopClick(project: UiProject) {
-        presenterScope.launch {
-            if (project.isRunning) {
-                interactor.stopTask(project.id)
-            } else {
-                interactor.stopRuningAndStartTask(project.id)
-            }
+    private fun onStartStopClick(project: UiProject) = presenterScope.launch {
+        if (project.isRunning) {
+            tasksInteractor.stopTask(project.id)
+        } else {
+            tasksInteractor.stopRunningAndStartNewTask(project.id)
         }
     }
 }

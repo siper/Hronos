@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.main
+package ru.stersh.hronos.ui.project.main
 
 import android.content.res.ColorStateList
 import android.view.View
@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.luizgrp.sectionedrecyclerviewadapter.Section
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 import ru.stersh.hronos.R
-import ru.stersh.hronos.feature.category.UiCategory
+import ru.stersh.hronos.ui.category.UiCategory
 
 class ProjectSection(
     val category: UiCategory,
