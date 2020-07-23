@@ -52,6 +52,7 @@ class TimerView : AppCompatTextView {
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
         super.onVisibilityChanged(changedView, visibility)
+        isVisible = visibility == View.VISIBLE
         updateRunning()
     }
 
@@ -66,7 +67,7 @@ class TimerView : AppCompatTextView {
     }
 
     private fun updateRunning() {
-        val running = isVisible && isStarted && isShown
+        val running = isVisible && isStarted // && isShown
         if (running != isRuning) {
             if (running) {
                 updateText()
@@ -88,21 +89,11 @@ class TimerView : AppCompatTextView {
         val hours = currentSeconds / 3600
         val minutes = (currentSeconds - hours * 3600) / 60
         val seconds = (currentSeconds - hours * 3600) - minutes * 60
-        val h = if (hours < 10) {
-            "0$hours"
-        } else {
-            hours.toString()
-        }
-        val m = if (minutes < 10) {
-            "0$minutes"
-        } else {
-            minutes.toString()
-        }
-        val s = if (seconds < 10) {
-            "0$seconds"
-        } else {
-            seconds.toString()
-        }
-        this.text = h + ":" + m + ":" + s
+
+        val h = if (hours < 10) "0$hours" else "$hours"
+        val m = if (minutes < 10) "0$minutes" else "$minutes"
+        val s = if (seconds < 10) "0$seconds" else "$seconds"
+
+        this.text = "$h:$m:$s"
     }
 }

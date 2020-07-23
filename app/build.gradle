@@ -86,7 +86,7 @@ dependencies {
 
     implementation 'com.facebook.stetho:stetho:1.5.1'
 
-    implementation 'io.github.luizgrp.sectionedrecyclerviewadapter:sectionedrecyclerviewadapter:3.1.0'
+    implementation 'com.h6ah4i.android.widget.advrecyclerview:advrecyclerview:1.0.0'
 
     // Kotlin std
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

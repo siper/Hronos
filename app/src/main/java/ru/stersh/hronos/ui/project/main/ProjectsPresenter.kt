@@ -24,12 +24,12 @@ class ProjectsPresenter(
             .combine(categoryInteractor.getCategories()) { projects, categories ->
                 return@combine categories
                     .map { category ->
-                        ProjectSection(
+                        UiProjectSection(
                             category,
                             projects.filter { it.categoryId == category.id }
-                        ) { onStartStopClick(it) }
+                        )
                     }
-                    .filter { it.data.isNotEmpty() }
+                    .filter { it.projects.isNotEmpty() }
             }
             .flowOn(Dispatchers.IO)
             .onEach {
@@ -57,7 +57,7 @@ class ProjectsPresenter(
         tasksInteractor.stopRunningTasks()
     }
 
-    private fun onStartStopClick(project: UiProject) = presenterScope.launch {
+    fun onStartStopClick(project: UiProject) = presenterScope.launch {
         if (project.isRunning) {
             tasksInteractor.stopTask(project.id)
         } else {

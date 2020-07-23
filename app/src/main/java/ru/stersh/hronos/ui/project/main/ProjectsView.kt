@@ -6,7 +6,7 @@ import moxy.viewstate.strategy.alias.SingleState
 
 interface ProjectsView : MvpView {
     @SingleState
-    fun updateSections(sections: List<ProjectSection>)
+    fun updateSections(sections: List<UiProjectSection>)
 
     @SingleState
     fun showEmptyView()
