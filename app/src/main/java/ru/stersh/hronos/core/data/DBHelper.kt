@@ -17,7 +17,8 @@ class DBHelper(private val context: Context, private val db: SupportSQLiteDataba
     fun createFavoriteCategory() {
         val favoriteTitle = context.getString(R.string.favorite_title)
         val favoriteId = Category.FAVORITE_ID
-        db.execSQL("INSERT INTO `categories` (id, title) VALUES ($favoriteId, '$favoriteTitle')")
+        val order = 0
+        db.execSQL("INSERT INTO `categories` (`id`, `title`, `order`) VALUES ($favoriteId, '$favoriteTitle', $order)")
     }
 
     /**
@@ -26,6 +27,7 @@ class DBHelper(private val context: Context, private val db: SupportSQLiteDataba
     fun createIncomingCategory() {
         val incomingTitle = context.getString(R.string.incoming_title)
         val incomingId = Category.INCOMING_ID
-        db.execSQL("INSERT INTO `categories` (id, title) VALUES ($incomingId, '$incomingTitle')")
+        val order = 1
+        db.execSQL("INSERT INTO `categories` (`id`, `title`, `order`) VALUES ($incomingId, '$incomingTitle', $order)")
     }
 }

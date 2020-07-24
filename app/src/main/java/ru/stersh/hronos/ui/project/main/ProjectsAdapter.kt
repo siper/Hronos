@@ -8,18 +8,14 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.GroupPositionItemDra
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter
 import ru.stersh.hronos.R
 
-class ProjectsAdapter(private val startStopCallback: (UiProject) -> Unit) :
-    AbstractExpandableItemAdapter<SectionViewHolder, ProjectViewHolder>(),
+class ProjectsAdapter(
+    private val dataProvider: ProjectsAdapterDataProvider,
+    private val startStopCallback: (UiProject) -> Unit
+) : AbstractExpandableItemAdapter<SectionViewHolder, ProjectViewHolder>(),
     ExpandableDraggableItemAdapter<SectionViewHolder, ProjectViewHolder> {
-    private var data = mutableListOf<UiProjectSection>()
 
     init {
         setHasStableIds(true)
-    }
-
-    fun setData(newData: List<UiProjectSection>) {
-        data.clear()
-        data.addAll(newData)
     }
 
     override fun onCreateGroupViewHolder(parent: ViewGroup, viewType: Int): SectionViewHolder {
@@ -40,7 +36,7 @@ class ProjectsAdapter(private val startStopCallback: (UiProject) -> Unit) :
         childPosition: Int,
         viewType: Int
     ) {
-        val project = data[groupPosition].projects[childPosition]
+        val project = dataProvider.getChild(groupPosition, childPosition)
         holder.bind(project, startStopCallback)
     }
 
@@ -49,18 +45,18 @@ class ProjectsAdapter(private val startStopCallback: (UiProject) -> Unit) :
         groupPosition: Int,
         viewType: Int
     ) {
-        val category = data[groupPosition].category
+        val category = dataProvider.getGroup(groupPosition)
         holder.bind(category)
     }
 
-    override fun getGroupCount(): Int = data.size
+    override fun getGroupCount(): Int = dataProvider.getGroupCount()
 
-    override fun getChildCount(groupPosition: Int): Int = data[groupPosition].projects.size
+    override fun getChildCount(groupPosition: Int): Int = dataProvider.getChildCount(groupPosition)
 
-    override fun getGroupId(groupPosition: Int): Long = data[groupPosition].category.id
+    override fun getGroupId(groupPosition: Int): Long = dataProvider.getGroupId(groupPosition)
 
     override fun getChildId(groupPosition: Int, childPosition: Int): Long {
-        return data[groupPosition].projects[childPosition].id
+        return dataProvider.getChildId(groupPosition, childPosition)
     }
 
     override fun getInitialGroupExpandedState(groupPosition: Int) = true
@@ -123,7 +119,7 @@ class ProjectsAdapter(private val startStopCallback: (UiProject) -> Unit) :
         groupPosition: Int,
         childPosition: Int
     ): ItemDraggableRange {
-        return GroupPositionItemDraggableRange(groupPosition, groupPosition)
+        return GroupPositionItemDraggableRange(0, dataProvider.getLastGroupPosition())
     }
 
     override fun onChildDragFinished(
@@ -133,7 +129,13 @@ class ProjectsAdapter(private val startStopCallback: (UiProject) -> Unit) :
         toChildPosition: Int,
         result: Boolean
     ) {
-
+        dataProvider.moveChild(
+            fromGroupPosition,
+            fromChildPosition,
+            toGroupPosition,
+            toChildPosition
+        )
+        notifyDataSetChanged()
     }
 
     override fun onGroupDragStarted(groupPosition: Int) {}

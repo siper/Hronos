@@ -12,6 +12,7 @@ import kotlinx.android.synthetic.main.fragment_projects.*
 import moxy.MvpAppCompatFragment
 import moxy.ktx.moxyPresenter
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import org.koin.core.get
 import ru.stersh.hronos.R
 import ru.stersh.hronos.core.Di
@@ -20,8 +21,10 @@ import ru.stersh.hronos.ui.project.editor.EditorProjectDialog
 class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), ProjectsView {
     private val presenter by moxyPresenter { ProjectsPresenter(Di.get(), get(), get()) }
 
+    private val dataProvider by inject<ProjectsAdapterDataProvider>()
+
     private val adapter by lazy {
-        ProjectsAdapter { presenter.onStartStopClick(it) }
+        ProjectsAdapter(dataProvider) { presenter.onStartStopClick(it) }
     }
 
     override fun onCreateView(
@@ -39,7 +42,7 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), Proje
 
     override fun updateSections(sections: List<UiProjectSection>) {
         content.visibility = View.VISIBLE
-        adapter.setData(sections)
+        dataProvider.setData(sections)
         adapter.notifyDataSetChanged()
     }
 

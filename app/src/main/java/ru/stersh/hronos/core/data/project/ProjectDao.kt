@@ -17,6 +17,9 @@ interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun putAll(vararg projects: Project)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun putAll(projects: List<Project>)
+
     @Query("SELECT * FROM ${Project.PROJECTS_TABLE} WHERE id = :id")
     suspend fun getProject(id: Int): Project?
 }

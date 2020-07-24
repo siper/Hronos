@@ -14,6 +14,7 @@ import ru.stersh.hronos.core.data.HronosDB
 import ru.stersh.hronos.feature.category.CategoryInteractor
 import ru.stersh.hronos.feature.project.ProjectInteractor
 import ru.stersh.hronos.feature.task.TaskInteractor
+import ru.stersh.hronos.ui.project.main.ProjectsAdapterDataProvider
 
 object Di : KoinComponent {
     private val modules by lazy { listOf(interactor, data, repository) }
@@ -46,6 +47,7 @@ object Di : KoinComponent {
                 })
                 .build()
         }
+        single { ProjectsAdapterDataProvider(get()) }
     }
 
     private val repository = module {

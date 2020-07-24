@@ -8,12 +8,13 @@ import ru.stersh.hronos.core.data.category.Category.Companion.CATEGORIES_TABLE
 data class Category(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val title: String
+    val title: String,
+    val order: Int
 ) {
     companion object {
         const val CATEGORIES_TABLE = "categories"
 
-        const val INCOMING_ID = 1L
-        const val FAVORITE_ID = 2L
+        const val FAVORITE_ID = 1L
+        const val INCOMING_ID = 2L
     }
 }

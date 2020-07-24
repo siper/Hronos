@@ -26,10 +26,13 @@ class ProjectsPresenter(
                     .map { category ->
                         UiProjectSection(
                             category,
-                            projects.filter { it.categoryId == category.id }
+                            projects
+                                .filter { it.categoryId == category.id }
+                                .sortedBy { it.order }
+                                .toMutableList()
                         )
                     }
-                    .filter { it.projects.isNotEmpty() }
+                    .sortedBy { it.projects.count() }
             }
             .flowOn(Dispatchers.IO)
             .onEach {

@@ -48,6 +48,7 @@ class ProjectInteractor(
 
     suspend fun addProject(title: String, color: Int, category: String) {
         val categories = categoryDao.getAll().first()
+        val lastOrder = categoryDao.getLastOrder() ?: 1
         val categoryId = if (category.trim().isNotEmpty()) {
             val cat = categories.filter { it.title == category.trim() }
             if (cat.isNotEmpty()) {
@@ -55,7 +56,8 @@ class ProjectInteractor(
             } else {
                 categoryDao.put(
                     Category(
-                        title = category
+                        title = category,
+                        order = lastOrder + 1
                     )
                 )
             }
