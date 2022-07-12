@@ -20,6 +20,6 @@ interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun putAll(projects: List<Project>)
 
-    @Query("SELECT * FROM ${Project.PROJECTS_TABLE} WHERE id = :id")
-    suspend fun getProject(id: Int): Project?
+    @Query("SELECT * FROM ${Project.PROJECTS_TABLE} WHERE id = :id LIMIT 1")
+    suspend fun getProject(id: Long): Project?
 }
