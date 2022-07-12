@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.editor
+package ru.stersh.hronos.ui.project.editor
 
 import android.content.res.ColorStateList
 import android.widget.FrameLayout
@@ -7,8 +7,8 @@ import androidx.core.widget.ImageViewCompat
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
 import com.hannesdorfmann.adapterdelegates4.dsl.adapterDelegate
 import ru.stersh.hronos.R
-import ru.stersh.musicmagician.extention.hide
-import ru.stersh.musicmagician.extention.show
+import ru.stersh.hronos.extention.hide
+import ru.stersh.hronos.extention.show
 
 class ColorsAdapter(
     onColorClick: (UiColor) -> Unit

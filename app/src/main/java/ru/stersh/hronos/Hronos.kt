@@ -6,27 +6,19 @@ import com.jakewharton.threetenabp.AndroidThreeTen
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.context.startKoin
 import ru.stersh.hronos.core.Di
 
 class Hronos : Application() {
     override fun onCreate() {
         super.onCreate()
-        initKoin()
+        Di.init(this)
         initThreeTeen()
         initStetho()
+        initCalligraphy()
     }
 
     private fun initThreeTeen() {
         AndroidThreeTen.init(this)
-    }
-
-    private fun initKoin() {
-        startKoin {
-            androidContext(this@Hronos)
-            modules(Di.modules)
-        }
     }
 
     private fun initStetho() {

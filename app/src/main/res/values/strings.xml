@@ -6,4 +6,7 @@
     <string name="project_name_error">Project name can\'t be empty</string>
     <string name="project_category">Project category</string>
     <string name="stop_task_title">Stop</string>
+    <string name="incoming_title">Incoming</string>
+    <string name="favorite_title">Favorite</string>
+    <string name="create">Create</string>
 </resources>

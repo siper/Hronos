@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.category
+package ru.stersh.hronos.ui.category
 
 data class UiCategory(
     val id: Long,

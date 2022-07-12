@@ -2,7 +2,7 @@ package ru.stersh.hronos
 
 import android.os.Bundle
 import ru.stersh.hronos.core.ui.BaseActivity
-import ru.stersh.hronos.feature.project.main.ProjectsFragment
+import ru.stersh.hronos.ui.project.main.ProjectsFragment
 
 class MainActivity : BaseActivity() {
 

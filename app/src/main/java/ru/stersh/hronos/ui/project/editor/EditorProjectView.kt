@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.editor
+package ru.stersh.hronos.ui.project.editor
 
 import moxy.MvpView
 import moxy.viewstate.strategy.alias.AddToEndSingle

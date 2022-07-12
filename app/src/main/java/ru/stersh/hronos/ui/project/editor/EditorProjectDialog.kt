@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.project.editor
+package ru.stersh.hronos.ui.project.editor
 
 import android.os.Bundle
 import android.text.Editable
@@ -16,7 +16,7 @@ import ru.stersh.hronos.R
 import ru.stersh.hronos.core.Di
 
 class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
-    private val presenter by moxyPresenter { EditorProjectPresenter(Di.get()) }
+    private val presenter by moxyPresenter { EditorProjectPresenter(Di.get(), Di.get()) }
 
     private val adapter: ColorsAdapter by lazy {
         ColorsAdapter { clickedColor ->

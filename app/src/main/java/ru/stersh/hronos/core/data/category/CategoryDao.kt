@@ -1,4 +1,4 @@
-package ru.stersh.hronos.feature.category.core
+package ru.stersh.hronos.core.data.category
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -13,4 +13,7 @@ interface CategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun put(category: Category): Long
+
+    @Query("SELECT `order` FROM ${Category.CATEGORIES_TABLE} ORDER BY `order` DESC")
+    suspend fun getLastOrder(): Int?
 }

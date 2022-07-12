@@ -40,4 +40,9 @@
         <item name="android:paddingBottom">13dp</item>
     </style>
 
+    <style name="FilledButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:minHeight">56dp</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:elevation">0dp</item>
+    </style>
 </resources>
