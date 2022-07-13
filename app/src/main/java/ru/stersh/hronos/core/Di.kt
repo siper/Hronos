@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
@@ -14,10 +15,11 @@ import ru.stersh.hronos.core.data.HronosDB
 import ru.stersh.hronos.feature.category.CategoryInteractor
 import ru.stersh.hronos.feature.project.ProjectInteractor
 import ru.stersh.hronos.feature.task.TaskInteractor
-import ru.stersh.hronos.ui.project.main.ProjectsAdapterDataProvider
+import ru.stersh.hronos.ui.project.list.ProjectsAdapterDataProvider
+import ru.stersh.hronos.ui.project.list.ProjectsViewModel
 
 object Di : KoinComponent {
-    private val modules by lazy { listOf(interactor, data, repository) }
+    private val modules by lazy { listOf(interactor, data, repository, projects) }
 
     fun init(application: Application) {
         startKoin {
@@ -54,5 +56,9 @@ object Di : KoinComponent {
         single { get<HronosDB>().projectDao() }
         single { get<HronosDB>().taskDao() }
         single { get<HronosDB>().categoryDao() }
+    }
+
+    private val projects = module {
+        viewModel { ProjectsViewModel(get(), get(), get()) }
     }
 }

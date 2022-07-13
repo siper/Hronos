@@ -7,16 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.dialog_add_project.*
-import moxy.MvpBottomSheetDialogFragment
-import moxy.ktx.moxyPresenter
-import org.koin.core.get
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.stersh.hronos.R
-import ru.stersh.hronos.core.Di
+import ru.stersh.hronos.databinding.DialogAddProjectBinding
 
-class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
-    private val presenter by moxyPresenter { EditorProjectPresenter(Di.get(), Di.get()) }
+class ProjectEditorDialog : BottomSheetDialogFragment() {
+
+    private var _binding: DialogAddProjectBinding? = null
+    private val binding: DialogAddProjectBinding
+        get() = _binding!!
+
+    private val viewModel: ProjectEditorViewModel by viewModel()
 
     private val adapter: ColorsAdapter by lazy {
         ColorsAdapter { clickedColor ->
@@ -36,33 +40,34 @@ class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.dialog_add_project, container, false)
+    ): View {
+        _binding = DialogAddProjectBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        done.setOnClickListener {
+        binding.done.setOnClickListener {
             val color = adapter.items
                 .filter { it.isSelected }
                 .map { it.id }
                 .firstOrNull() ?: return@setOnClickListener
-            presenter.addProject(
-                project_title.text.toString(),
+            viewModel.addProject(
+                binding.projectTitle.text.toString(),
                 color,
-                project_category.text.toString()
+                binding.projectCategory.text.toString()
             )
         }
-        colors.layoutManager =
+        binding.colors.layoutManager =
             LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
-        colors.adapter = adapter
+        binding.colors.adapter = adapter
         adapter.items = resources.getIntArray(R.array.project_colors).mapIndexed { index, i ->
             UiColor(index, i, index == 0)
         }
-        project_category.addTextChangedListener(object : TextWatcher {
+        binding.projectCategory.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    presenter.requestSuggestions(it.toString())
+                    viewModel.requestSuggestions(it.toString())
                 }
             }
 
@@ -70,22 +75,30 @@ class EditorProjectDialog : MvpBottomSheetDialogFragment(), EditorProjectView {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-    }
 
-    override fun done() {
-        dismiss()
-    }
-
-    override fun showError() {
-        project_input_layout.error = getString(R.string.project_name_error)
-    }
-
-    override fun fillSuggestions(suggestions: List<String>) {
-        val adapter = ArrayAdapter<String>(
-            requireActivity(),
-            android.R.layout.simple_dropdown_item_1line,
-            suggestions
-        )
-        project_category.setAdapter(adapter)
+        lifecycleScope.launchWhenStarted {
+            viewModel.exit.collect {
+                dismiss()
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.error.collect {
+                binding.projectInputLayout.error = if (it) {
+                     getString(R.string.project_name_error)
+                } else {
+                    null
+                }
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.suggestions.collect {
+                val adapter = ArrayAdapter<String>(
+                    requireActivity(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    it
+                )
+                binding.projectCategory.setAdapter(adapter)
+            }
+        }
     }
 }

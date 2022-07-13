@@ -1,4 +1,4 @@
-package ru.stersh.hronos.ui.project.main
+package ru.stersh.hronos.ui.project.list
 
 import android.graphics.Rect
 import android.view.View
