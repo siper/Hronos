@@ -1,80 +1,89 @@
-package ru.stersh.hronos.ui.project.main
+package ru.stersh.hronos.ui.project.list
 
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager
-import kotlinx.android.synthetic.main.fragment_projects.*
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
-import org.koin.core.get
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.stersh.hronos.R
-import ru.stersh.hronos.core.Di
-import ru.stersh.hronos.ui.project.editor.EditorProjectDialog
+import ru.stersh.hronos.databinding.FragmentProjectsBinding
+import ru.stersh.hronos.ui.project.editor.ProjectEditorDialog
 
-class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), ProjectsView {
-    private val presenter by moxyPresenter { ProjectsPresenter(Di.get(), get(), get()) }
+class ProjectsFragment : Fragment() {
+
+    private var _binding: FragmentProjectsBinding? = null
+    private val binding: FragmentProjectsBinding
+        get() = _binding!!
+
+    private val viewModel: ProjectsViewModel by viewModel()
 
     private val dataProvider by inject<ProjectsAdapterDataProvider>()
 
     private val adapter by lazy {
-        ProjectsAdapter(dataProvider) { presenter.onStartStopClick(it) }
+        ProjectsAdapter(dataProvider) { viewModel.onStartStopClick(it) }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_projects, container, false)
+    ): View {
+        _binding = FragmentProjectsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter(savedInstanceState)
+        lifecycleScope.launchWhenStarted {
+            viewModel.sections.collect { sections ->
+                binding.content.visibility = View.VISIBLE
+                dataProvider.setData(sections)
+                adapter.notifyDataSetChanged()
+            }
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.mainButtonState.collect { mainButtonState ->
+                if (mainButtonState == ProjectsViewModel.MainButtonStateUi.STOP_TASK) {
+                    showStopTaskButton()
+                } else {
+                    showAddProjectButton()
+                }
+            }
+        }
     }
 
-    override fun updateSections(sections: List<UiProjectSection>) {
-        content.visibility = View.VISIBLE
-        dataProvider.setData(sections)
-        adapter.notifyDataSetChanged()
-    }
-
-    override fun showEmptyView() {}
-
-    override fun showAddProjectButton() {
-        project_add_btn.setText(R.string.add_project_title)
-        project_add_btn.setIconResource(R.drawable.ic_add_black_24dp)
-        project_add_btn.setIconTintResource(R.color.colorWhite)
-        project_add_btn.setOnClickListener {
-            val dialog = EditorProjectDialog()
+    private fun showAddProjectButton() {
+        binding.projectAddBtn.setText(R.string.add_project_title)
+        binding.projectAddBtn.setIconResource(R.drawable.ic_add_black_24dp)
+        binding.projectAddBtn.setIconTintResource(R.color.colorWhite)
+        binding.projectAddBtn.setOnClickListener {
+            val dialog = ProjectEditorDialog()
             dialog.show(parentFragmentManager, null)
         }
     }
 
-    override fun showStopTaskButton() {
-        project_add_btn.setText(R.string.stop_task_title)
-        project_add_btn.setIconResource(R.drawable.ic_stop)
-        project_add_btn.setIconTintResource(R.color.colorWhite)
-        project_add_btn.setOnClickListener {
-            presenter.stopRunningTasks()
+    private fun showStopTaskButton() {
+        binding.projectAddBtn.setText(R.string.stop_task_title)
+        binding.projectAddBtn.setIconResource(R.drawable.ic_stop)
+        binding.projectAddBtn.setIconTintResource(R.color.colorWhite)
+        binding.projectAddBtn.setOnClickListener {
+            viewModel.stopRunningTasks()
         }
     }
 
     private fun initAdapter(savedInstanceState: Bundle?) {
         val lm = GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
 
-
         val savedState = savedInstanceState?.getParcelable<Parcelable>(PREVIOUS_SAVE_STATE)
         val expMgr = RecyclerViewExpandableItemManager(savedState)
-//        expMgr?.setOnGroupCollapseListener(this)
-//        expMgr?.setOnGroupExpandListener(this)
 
         val dragAndDropManager = RecyclerViewDragDropManager()
         var wrappedAdapter = expMgr.createWrappedAdapter(adapter)
@@ -94,7 +103,7 @@ class ProjectsFragment : MvpAppCompatFragment(R.layout.fragment_projects), Proje
         dragAndDropManager.setInitiateOnTouch(false)
         dragAndDropManager.setInitiateOnMove(false)
 
-        with(content) {
+        with(binding.content) {
             layoutManager = lm
             setHasFixedSize(true)
             adapter = wrappedAdapter

@@ -1,10 +1,10 @@
 package ru.stersh.hronos
 
 import android.os.Bundle
-import ru.stersh.hronos.core.ui.BaseActivity
-import ru.stersh.hronos.ui.project.main.ProjectsFragment
+import androidx.appcompat.app.AppCompatActivity
+import ru.stersh.hronos.ui.project.list.ProjectsFragment
 
-class MainActivity : BaseActivity() {
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,4 +1,4 @@
-package ru.stersh.hronos.ui.project.main
+package ru.stersh.hronos.ui.project.list
 
 import android.graphics.Rect
 import android.view.View
@@ -15,7 +15,7 @@ class ProjectsDivider(private val margin: Int = 16.dp) : RecyclerView.ItemDecora
         state: RecyclerView.State
     ) {
         val viewHolder = parent.getChildViewHolder(view)
-        val currentPosition = viewHolder.adapterPosition
+        val currentPosition = viewHolder.bindingAdapterPosition
         if (viewHolder is ProjectViewHolder) {
             val column =
                 if (currentPosition - firstItemInSectionPosition == 0 || (currentPosition - firstItemInSectionPosition) % 2 == 0) {

@@ -8,7 +8,7 @@ import ru.stersh.hronos.core.data.category.CategoryDao
 import ru.stersh.hronos.core.data.project.Project
 import ru.stersh.hronos.core.data.project.ProjectDao
 import ru.stersh.hronos.core.data.task.TaskDao
-import ru.stersh.hronos.ui.project.main.UiProject
+import ru.stersh.hronos.ui.project.list.UiProject
 
 class ProjectInteractor(
     private val projectDao: ProjectDao,
