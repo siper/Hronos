@@ -24,7 +24,8 @@ class ProjectEditorDialog : BottomSheetDialogFragment() {
 
     private val adapter: ColorsAdapter by lazy {
         ColorsAdapter { clickedColor ->
-            val items = adapter.items.map {
+            val oldItems = adapter.items ?: emptyList()
+            val items = oldItems.map {
                 if (it.id == clickedColor.id) {
                     it.copy(isSelected = true)
                 } else {
@@ -48,7 +49,8 @@ class ProjectEditorDialog : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.done.setOnClickListener {
-            val color = adapter.items
+            val oldItems = adapter.items ?: emptyList()
+            val color = oldItems
                 .filter { it.isSelected }
                 .map { it.id }
                 .firstOrNull() ?: return@setOnClickListener

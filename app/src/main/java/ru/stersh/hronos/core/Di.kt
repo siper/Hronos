@@ -15,6 +15,7 @@ import ru.stersh.hronos.core.data.HronosDB
 import ru.stersh.hronos.feature.category.CategoryInteractor
 import ru.stersh.hronos.feature.project.ProjectInteractor
 import ru.stersh.hronos.feature.task.TaskInteractor
+import ru.stersh.hronos.ui.project.editor.ProjectEditorViewModel
 import ru.stersh.hronos.ui.project.list.ProjectsAdapterDataProvider
 import ru.stersh.hronos.ui.project.list.ProjectsViewModel
 
@@ -60,5 +61,6 @@ object Di : KoinComponent {
 
     private val projects = module {
         viewModel { ProjectsViewModel(get(), get(), get()) }
+        viewModel { ProjectEditorViewModel(get(), get()) }
     }
 }
