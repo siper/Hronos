@@ -1,0 +1,14 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+}
+
+apply from: "${project.rootDir}/buildscripts/android-library.gradle"
+
+dependencies {
+    implementation(libs.bundles.androidx.room)
+    kapt(libs.androidx.room.compiler)
+
+    implementation(libs.bundles.koin)
+}

@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -30,7 +29,12 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    
+
+    implementation(project(":core:room"))
+    implementation(project(":core:ui"))
+    implementation(project(":feature:project:list"))
+    implementation(project(":feature:project:editor"))
+
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewmodel)
 
@@ -42,9 +46,6 @@ dependencies {
     implementation(libs.material)
 
     implementation(libs.bundles.koin)
-
-    implementation(libs.bundles.androidx.room)
-    kapt(libs.androidx.room.compiler)
 
     implementation(libs.timber)
 

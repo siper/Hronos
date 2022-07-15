@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Hronos</string>
+    <string name="add_project_title">Add project</string>
+    <string name="projects_title">Projects</string>
+    <string name="project_name">Project name</string>
+    <string name="project_category">Project category</string>
+    <string name="stop_task_title">Stop</string>
+    <string name="incoming_title">Incoming</string>
+    <string name="favorite_title">Favorite</string>
+    <string name="create">Create</string>
+</resources>
