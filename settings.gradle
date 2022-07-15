@@ -13,5 +13,10 @@ dependencyResolutionManagement {
     }
 }
 
-include ':app'
 rootProject.name='Hronos'
+include ':app'
+include ':core:room'
+include ':core:ui'
+include ':feature:project:list'
+include ':core:utils'
+include ':feature:project:editor'

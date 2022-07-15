@@ -1,0 +1,17 @@
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+}
+
+apply from: "${project.rootDir}/buildscripts/android-library.gradle"
+
+dependencies {
+    implementation(libs.advrecyclerview)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.recyclerview.core)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.material)
+    implementation(libs.bundles.koin)
+}

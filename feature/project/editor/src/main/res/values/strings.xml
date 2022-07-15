@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="project_name_error">Project name can\'t be empty</string>
+</resources>

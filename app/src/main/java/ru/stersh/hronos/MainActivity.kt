@@ -2,7 +2,6 @@ package ru.stersh.hronos
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import ru.stersh.hronos.ui.project.list.ProjectsFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,7 +12,7 @@ class MainActivity : AppCompatActivity() {
             .beginTransaction()
             .replace(
                 R.id.root_container,
-                ProjectsFragment()
+                ru.stersh.hronos.feature.project.list.ui.ProjectsFragment()
             )
             .commit()
     }
